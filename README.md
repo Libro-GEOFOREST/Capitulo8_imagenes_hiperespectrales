@@ -1,4 +1,4 @@
-# Capitulo_imagenes_hiperespectrales
+# Capitulo imagenes hiperespectrales
 
 ## 1. Búsqueda y visualización de imágenes hiperespectrales
 
