@@ -4,7 +4,7 @@ En el presente ejercicio se va a aprender a gestionar la búsqueda y descarga de
 
 ## 1. Búsqueda y visualización de imágenes hiperespectrales
 
-A través del editor de código de GEE buscamos la zona de estudio. Se parte de unas parcelas en las que se midieron datos fisiológicos durante el verano del año 2008 y cuya capa en formato shapefile se proporciona en la carpeta Parcelas. Primero es necesario tenerla incluída en los **Assets**. Para ello, es necesario haber :
+Se va a trabajar a partir de la API Code Editor de Google Earth Engine (GEE) y por tanto es necesario cumplir con el registro en la plataforma, tal y como se indica en el capítulo destinado al mismo. A través del editor de código de GEE buscamos la zona de estudio. Se parte de unas parcelas en las que se midieron datos fisiológicos durante el verano del año 2008 y cuya capa en formato shapefile se proporciona en la carpeta Parcelas. Primero es necesario tenerla incluída en los **Assets**. Para ello, es necesario haber :
 
 ``` js
 // 01. Zona de estudio
