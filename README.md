@@ -4,7 +4,20 @@ En el presente ejercicio se va a aprender a gestionar la búsqueda y descarga de
 
 ## 1. Búsqueda y visualización de imágenes hiperespectrales
 
-Se va a trabajar a partir de la API Code Editor de Google Earth Engine (GEE) y por tanto es necesario cumplir con el registro en la plataforma, tal y como se indica en el capítulo destinado al mismo. A través del editor de código de GEE buscamos la zona de estudio. Se parte de unas parcelas en las que se midieron datos fisiológicos durante el verano del año 2008 y cuya capa en formato shapefile se proporciona en la carpeta Parcelas. Primero es necesario tenerla incluída en los **Assets**. Para ello, es necesario haber :
+Se va a trabajar a partir de la API Code Editor de Google Earth Engine (GEE) y por tanto es necesario cumplir con el registro en la plataforma, tal y como se indica en el capítulo destinado al mismo. 
+
+
+![](./Auxiliares/Code_Editor.png)
+
+A través del editor de código de GEE se va a la zona de estudio. Se parte de unas parcelas de la especia *Pinus sylvestris* en las que se midieron datos fisiológicos, entre ellos la conductancia estomática (GS, mmolH2O m^[-2] s^[-1]) medida a las 12:00 GMT, durante una campaña de campo en el verano del año 2008. La localización de las mismas se proporciona en una capa en formato shapefile dentro la carpeta Parcelas. Para poder trabajar con ella, primero es necesario tenerla importada en los **Assets**. 
+
+![](./Auxiliares/Assets.png)
+
+Una vez ahí, al clicar sobre ella, se accede a los detalles del Asset, en donde se especifica la ubicación geográfica y otras características del mismo:
+
+![](./Auxiliares/Assets_details.png)
+
+Al pinchar sobre *Import*, en la esquina superior derecha, se importa el Asset como una tabla para trabajar con él a través del editor de código en el script que hayamos creado. Una vez hecho esto, se puede acceder al mismo con el siguiente código:
 
 ``` js
 // 01. Zona de estudio
@@ -14,15 +27,23 @@ Map.addLayer(filabres, {color: 'red'})
 Map.centerObject(filabres, 10);
 ``` 
 
-Ahora se buscan las imágenes hiperespectrales disponibles para la zona de estudio en la época de medición de las parcelas. Google Earth Engine 
+Si se guarda y se ejecuta (*Run*) se localizarán las parcelas en el mapa:
+
+![](./Auxiliares/Parcelas.png)
+
+Ahora se buscan las imágenes hiperespectrales disponibles para la zona de estudio en la época de medición de las parcelas. Dentro de toda la información disponible en GEE, dentro de los datos dinámicos se encuentran imágenes de una única misión hiperespectral satelital, la misión "Hyperion", que estuvo en órbita desde 2001 hasta 2017. Dichas imágenes se componen de más de 200 bandas que miden desde el visible hasta el infrarrojo medio de onda corta en anchos de banda de 10 nm.
+
+![](./Auxiliares/Hyperion.png)
+
+Para consultar la disponibilidad de esta colección de imágenes en la zona de estudio, así como para visualizarla se ejecuta el siguiente código:
 
 ``` js
 //02. Imagenes hiperespectrales
 var dataset = ee.ImageCollection('EO1/HYPERION')
-                  .filter(ee.Filter.date('2008-07-01', '2008-09-01'))
-                  .filter(ee.Filter.bounds(filabres));
+                  .filter(ee.Filter.date('2008-07-01', '2008-09-01')) //Filtro temporal para el verano de 2008
+                  .filter(ee.Filter.bounds(filabres));                //Filtro espacial para la zona de estudio
 
-//Seleccion de capas para visualizar la imagen
+//Seleccion de bandas para visualizar la imagen como "Falso Color"
 var rgb = dataset.select(['B050', 'B023', 'B015']);
 
 //Parametros de visualizacion
@@ -43,8 +64,15 @@ dataset = dataset.first();
 
 //Descripcion en la consola de la imagen seleccionada
 print(dataset);
-
 ```
+
+Ahora se visualiza en la ventana de mapa la única imagen del sensor para la zona y la fecha introducidas. 
+
+![](./Auxiliares/Hyperion_Filabres.png)
+
+Y en la consola se puede acceder a las características de la misma.
+
+![](./Auxiliares/Hyperion_consola.png)
 
 Corrección a valores de reflectancia
 
