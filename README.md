@@ -9,7 +9,7 @@ Se va a trabajar a partir de la API Code Editor de Google Earth Engine (GEE) y p
 
 ![](./Auxiliares/Code_Editor.png)
 
-A través del editor de código de GEE se va a la zona de estudio. Se parte de unas parcelas de la especia *Pinus sylvestris* en las que se midieron datos fisiológicos, entre ellos la conductancia estomática (GS, mmolH2O m^[-2] s^[-1]) medida a las 12:00 GMT, durante una campaña de campo en el verano del año 2008. La localización de las mismas se proporciona en una capa en formato shapefile dentro la carpeta Parcelas. Para poder trabajar con ella, primero es necesario tenerla importada en los **Assets**. 
+A través del editor de código de GEE se va a la zona de estudio. Se parte de unas parcelas de la especia *Pinus sylvestris* en las que se midieron datos fisiológicos, entre ellos la conductancia estomática (GS, mmol$H_2$O · $m^-2$ · $s^-1$) medida a las 12:00 GMT, durante una campaña de campo en el verano del año 2008. La localización de las mismas se proporciona en una capa en formato shapefile dentro la carpeta Parcelas. Para poder trabajar con ella, primero es necesario tenerla importada en los **Assets**. 
 
 ![](./Auxiliares/Assets.png)
 
@@ -74,34 +74,37 @@ Y en la consola se puede acceder a las características de la misma.
 
 ![](./Auxiliares/Hyperion_consola.png)
 
-Corrección a valores de reflectancia
+Lamentablemente, la colección de imágenes de Hyperion no está convertida a valores de reflectancia, como sí lo están otras colecciones como la de Landsat. Es por ello, por lo que habrá que aplicar una serie de fórmulas que conviertan a la imagen en valores entendibles y comparables con otras escenas. En la descripción de la colección de imágenes, se indica que los valores de los píxeles están radiométricamente calibrados, pero que necesitan ser corregidos por un factor, que en las bandas de la 8 a la 57 toma el valor de 40 y en las bandas de la 77 a la 224, toma el valor de 80. 
 
 ```js
-/***
- * EO-1, Hyperion, calcular radiancia (rescalado)
- * 
- * VNIR bands (B008-B057 (426.82nm - 925.41nm): L = Digital Number / 40
- * SWIR bands (B077-B224 (912.45nm - 2395.50nm): L = Digital Number / 80
- * 
- */
-var kVNIR = ee.List.repeat(40, 57-8+1)
-var kSWIR = ee.List.repeat(80, 224-77+1)
+//Se crea una lista en la que se repite cada factor de escala por el número de bandas en las que va a ser aplicado
+var kVNIR = ee.List.repeat(40, 57-8+1)    //Para las bandas de la 8 a la 57 del VNIR
+var kSWIR = ee.List.repeat(80, 224-77+1)  //Para las bandas de la 77 a la 224 del SWIR
+
+//Se concatenan ambas listas
 var k = kVNIR.cat(kSWIR)
-  
+
+//Se aplica el factor de escala a las bandas de la imagen dividiendo cada una por su correspondiente constante y renombrarlas con su nombre original 
 var radiancia = dataset.toFloat().divide(ee.Image.constant(k).rename(dataset.bandNames()))
+```
 
+Ahora es necesario convertir la radiancia a reflectancia. La siguiente fórmula se emplea individualmente sobre cada banda ([Thenkabail et al., 2004](https://www.sciencedirect.com/science/article/pii/S0034425703003560)]) de forma que la luz solar reflejada dependiendo de cada longitud de onda puede ser descrita así: 
 
-/***
- * EO-1, Hyperion, convertir radiancia a reflectancia
- */
+$$ &rho_p = &pi · L_lambda · d^2 · ESUN_&lambda · cos &theta_S $$
 
-// calcular el día del año
-var fecha = ee.Date(dataset.get('system:time_start'));
-var jan01 = ee.Date.fromYMD(fecha.get('year'), 1, 1);
-var doy = fecha.difference(jan01,'day').add(1);
+Donde $&rho_p$ es la reflectancia exoatmosférica en el satélite, $L_lambda$ es la radiancia en W $m^-2$ s$r^-1$ &mu $m^-1$, d es la distancia entre la tierra y el sol en unidades astronómicas el día de la adquisición de la imagen, ESUN_&lambda es la irradiancia solar exoatmosférica media y &theta_S es el ángulo zenital solar en grados.
+es la radiancia en el sensor, &tau es la transmitancia, &rho es la reflectacia, $E_dir$ es la irradiancia solar directa, $E_dif$ es la irradiancia solar difusa y $L_p$ es la radiancia del camino.
+
+https://isprs-archives.copernicus.org/articles/XL-3-W2/169/2015/isprsarchives-XL-3-W2-169-2015.pdf
+
+```js
+//Se calcula el día del año de la imagen
+var fecha = ee.Date(dataset.get('system:time_start')); //Busca y obtiene de las características de la imagen cuándo fue tomada
+var jan01 = ee.Date.fromYMD(fecha.get('year'), 1, 1);  //Se introduce el 1 de enero del año de toma de la imagen como día inicial
+var doy = fecha.difference(jan01,'day').add(1);        //Se calcula el día del año de la imagen por diferencia con el 1 de enero.
 
 //Distancia Tierra-Sol al cuadrado (d2) 
-// http://physics.stackexchange.com/questions/177949/earth-sun-distance-on-a-given-day-of-the-year
+//Sigue las pautas de una ecuación descrita en http://physics.stackexchange.com/questions/177949/earth-sun-distance-on-a-given-day-of-the-year
 var d = ee.Number(doy).subtract(4).multiply(0.017202).cos().multiply(-0.01672).add(1) 
     
 var d2 = d.multiply(d)  
@@ -124,6 +127,9 @@ var viz = {bands: ['B032', 'B019', 'B012'],min:0, max:0.3}
 Map.addLayer(reflectancia,viz,"image")
 Map.centerObject(filabres,12)
 ```
+
+## 2. Signaturas espectrales de vegetación con procesos de decaímiento
+
 
 ## 2. Cálculo de índices en imágenes hiperespectrales
 
