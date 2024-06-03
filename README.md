@@ -90,9 +90,11 @@ var radiancia = dataset.toFloat().divide(ee.Image.constant(k).rename(dataset.ban
 
 Ahora es necesario convertir la radiancia a reflectancia. La siguiente fórmula se emplea individualmente sobre cada banda ([Thenkabail et al., 2004](https://www.sciencedirect.com/science/article/pii/S0034425703003560)]) de forma que la luz solar reflejada dependiendo de cada longitud de onda puede ser descrita así: 
 
+$$ rho_{p} = pi · L_{lambda} · d^2 · ESUN_{lambda] · cos theta_{S} $$
+
 $$ &rho_{p} = &pi · L_{&lambda} · d^2 · ESUN_{&lambda] · cos &theta_{S} $$
 
-Donde $&rho_p$ es la reflectancia exoatmosférica en el satélite, $L_{&lambda}$ es la radiancia en W $m^(-2)$ s$r^^(-1)$ &mu $m^(-1)$, d es la distancia entre la tierra y el sol en unidades astronómicas el día de la adquisición de la imagen, $ESUN_{&lambda}$ es la irradiancia solar exoatmosférica media y $&theta_{S}$ es el ángulo zenital solar en grados.
+Donde $rho_p$ es la reflectancia exoatmosférica en el satélite, $L_{lambda}$ es la radiancia en W $m^(-2) s r^(-1) mu m^(-1)$, d es la distancia entre la tierra y el sol en unidades astronómicas el día de la adquisición de la imagen, $ESUN_{lambda}$ es la irradiancia solar exoatmosférica media y $theta_{S}$ es el ángulo zenital solar en grados.
 
 
 https://isprs-archives.copernicus.org/articles/XL-3-W2/169/2015/isprsarchives-XL-3-W2-169-2015.pdf
