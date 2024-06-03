@@ -97,8 +97,6 @@ Ahora es necesario convertir la radiancia a reflectancia. La siguiente fórmula 
 Donde $\rho_{p}$ es la reflectancia exoatmosférica en el satélite, $L_{\lambda}$ es la radiancia en $W m^{-2} s r^{-1} \mu m^{-1}$, d es la distancia entre la tierra y el sol en unidades astronómicas el día de la adquisición de la imagen, $ESUN_{\lambda}$ es la irradiancia solar exoatmosférica media y $\theta_{S}$ es el ángulo zenital solar en grados.
 
 
-https://isprs-archives.copernicus.org/articles/XL-3-W2/169/2015/isprsarchives-XL-3-W2-169-2015.pdf
-
 ```js
 //Se calcula el día del año de la imagen
 var fecha = ee.Date(dataset.get('system:time_start')); //Busca y obtiene de las características de la imagen cuándo fue tomada
@@ -125,12 +123,22 @@ var scalarFactors = ee.Number(Math.PI).multiply(d2).divide(cosz)
 var scalarApplied = ee.Image(radiancia).toFloat().multiply(scalarFactors)
 var reflectancia = scalarApplied.divide(ESUN)
 
-var viz = {bands: ['B032', 'B019', 'B012'],min:0, max:0.3}
+var viz = {bands: ['B032', 'B019', 'B012'],min:0, max:0.3} //Seleccion de bandas para visualizar la imagen como "color real"
 Map.addLayer(reflectancia,viz,"image")
 Map.centerObject(filabres,12)
 ```
 
+![](./Auxiliares/Hyperion_Filabres2.png)
+
+
 ## 2. Signaturas espectrales de vegetación con procesos de decaímiento
+
+![](./Auxiliares/Signaturas.png)
+
+La respuesta espectral de cada una de las parcelas es diferente debido a las distintas condiciones a las que están sometidas. La reflectancia obtenida en las longitudes de onda del visible está asociado al contenido de clorofilas del dosel arbóreo. El comportamiento espectral en las longitudes de onda del infrarrojo cercano está ligado a las diferencias en la estructura celular. Finalmente el infrarrojo medio se ve influido principalmente por el contenido en agua.
+
+Puede apreciarse la mayor capacidad de una imagen hiperespectral de reflejar la información de los procesos fisiológicos que ocurren en la vegetación, al compararse este resultado con el obtenido con una imagen Landsat de la misma fecha.
+
 
 
 ## 2. Cálculo de índices en imágenes hiperespectrales
