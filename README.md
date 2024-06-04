@@ -133,15 +133,79 @@ Map.centerObject(filabres,12)
 
 ## 2. Signaturas espectrales de vegetación con procesos de decaímiento
 
+La respuesta espectral de cada una de las parcelas es diferente debido a las distintas condiciones a las que están sometidas. La reflectancia obtenida en las longitudes de onda del visible está asociado al contenido de clorofilas del dosel arbóreo. El comportamiento espectral en las longitudes de onda del infrarrojo cercano está ligado a las diferencias en la estructura celular. Finalmente el infrarrojo medio se ve influido principalmente por el contenido en agua. Así, pueden apreciarse mínimos cambios en la reflectivad espectral distribuida en todo el rango del espectro indicando las propiedades biofísicas y bioquímicas, así como estructurales y de humedad de las distintas parcelas.
+
+```js
+//03. Gráfico
+
+//Paleta de colores
+var paletas=require('users/gena/packages:palettes')
+var viridisMio=paletas.crameri.oslo [25]
+
+//Grafico de la firma espectral de los puntos
+var options = {
+  title: 'Signaturas hiperespectrales de las parcelas',
+  hAxis: {title: 'Longitud de onda (nm)'},
+  vAxis: {title: 'Reflectancia'},
+  colors:viridisMio,
+  lineWidth: 1,
+  pointSize: 1
+};
+
+//Crear gráfico con las firmas espectrales
+var spectraChart = ui.Chart.image.regions(
+    reflectancia.select('B.*'), filabres, ee.Reducer.mean(), 30,'Id',wavelengths)
+        .setChartType('LineChart').setOptions(options);
+
+//Visualizar gráfico con las firmas espectrales en la consola
+print(spectraChart);
+```
+
 ![](./Auxiliares/Signaturas.png)
 
-La respuesta espectral de cada una de las parcelas es diferente debido a las distintas condiciones a las que están sometidas. La reflectancia obtenida en las longitudes de onda del visible está asociado al contenido de clorofilas del dosel arbóreo. El comportamiento espectral en las longitudes de onda del infrarrojo cercano está ligado a las diferencias en la estructura celular. Finalmente el infrarrojo medio se ve influido principalmente por el contenido en agua.
+Puede apreciarse cómo los datos de una imagen hiperespectral mejoran la capacidad de comprender, modelar, mapear y monitorear los procesos fisiológicos que ocurren en la vegetación, frente a datos multiespectrales de banda ancha, al compararse este resultado con el obtenido con una imagen Landsat de la misma fecha.
 
-Puede apreciarse la mayor capacidad de una imagen hiperespectral de reflejar la información de los procesos fisiológicos que ocurren en la vegetación, al compararse este resultado con el obtenido con una imagen Landsat de la misma fecha.
+```js
+var options2 = {
+  title: 'Signaturas multiespectrales de las parcelas',
+  hAxis: {title: 'Longitud de onda (nm)'},
+  vAxis: {title: 'Reflectancia'},
+  colors:viridisMio,
+  lineWidth: 1,
+  pointSize: 1,
+};
 
 
+//Comparativa con Landsat 5
+var Landsat5 = ee.ImageCollection('LANDSAT/LT05/C02/T1_L2')
+                  .filter(ee.Filter.date('2008-07-01', '2008-09-01'))
+                  .filter(ee.Filter.bounds(filabres));
 
-## 2. Cálculo de índices en imágenes hiperespectrales
+// Crear función para aplicar los factores de escalado de las imagenes Landsat5
+function applyScaleFactors(image) {
+  var opticalBands = image.select('SR_B.').multiply(0.0000275).add(-0.2);
+  var thermalBand = image.select('ST_B6').multiply(0.00341802).add(149.0);
+  return image.addBands(opticalBands, null, true)
+              .addBands(thermalBand, null, true);
+}
+
+//Aplicar función de escalado
+Landsat5 = Landsat5.map(applyScaleFactors);
+
+//Crear gráfico con las firmas espectrales
+var Chart1 = ui.Chart.image.regions(
+    Landsat5.first().select('SR_B.'), filabres, ee.Reducer.mean(), 30,'Id',wavelengths2)
+        .setChartType('LineChart').setOptions(options2);
+
+//Visualizar gráfico con las firmas espectrales en la consola
+print(Chart1);
+```
+
+![](./Auxiliares/Signaturas_Landsat.png)
+
+
+## 3. Cálculo de índices en imágenes hiperespectrales
+
 
 ```js
 //Modified Red Edge Normalized Difference Vegetation Index (NDVI705)
@@ -207,4 +271,3 @@ Map.addLayer(filabres, {color: 'red'});
 
 ```
 
-## 3. Signaturas espectrales de vegetación con procesos de decaímiento
