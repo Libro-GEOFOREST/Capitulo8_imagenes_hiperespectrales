@@ -206,16 +206,7 @@ print(Chart1);
 
 ## 3. Cálculo de índices en imágenes hiperespectrales
 
-Los índices que emplean imágenes hiperespectrales de bandas estrechas utilizan combinaciones de medidas de reflectancia a distinta longitud de onda, de manera que aportan información útil relativa al estado de la vegetación. La mayoría de las bandas empleadas se encuentr en la región del rojo y del infrarrojo cercano, buscando caracterizar la forma de la curva en el *rojo de borde* o *red-edge* entre los 690nm y los 740 que causa la transición entre la absorción de clorofilas y la distribución de hojas
-
-la concentración de clorofilas en las hojas, el índice de área foliar o la estructura del dose. 
-Narrowband greenness VIs are combinations of reflectance measurements sensitive to the combined effects of foliage chlorophyll concentration, canopy leaf area, foliage clumping, and canopy architecture. Similar to the broadband greenness VIs, narrowband greenness VIs are designed to provide a measure of the overall amount and quality of photosynthetic material in vegetation, which is essential for understanding the state of vegetation. Narrowband greenness VIs are intended for use with imaging spectrometers.
-
-One area where narrowband greenness VIs are useful is precision agriculture. This is an information- and technology-based agricultural management system to identify, analyze, and manage site-soil spatial and temporal variability.
-
-Most of these VIs use reflectance measurements in the red and near-infrared regions to sample the red edge portion of the reflectance curve. The red edge is a name used to describe the steeply sloped region of the vegetation reflectance curve between 690 nm and 740 nm that is caused by the transition from chlorophyll absorption and near-infrared leaf scattering. Use of near-infrared measurements, with much greater penetration depth through the canopy than red measurements, allows estimation of the total amount of green material in the column.
-
-Making narrowband measurements in the red edge allows these indices to be more sensitive to smaller changes in vegetation health than the broadband greenness VIs, particularly in conditions of dense vegetation where the broadband measures can saturate.
+Los índices en imágenes hiperespectrales utilizan combinaciones de medidas de reflectancia a distinta longitud de onda, de manera que aportan información útil relativa al estado de la vegetación. La mayoría de las bandas empleadas se encuentran en la región del rojo y del infrarrojo cercano, buscando caracterizar la forma de la curva en el *rojo de borde* o *red-edge* entre los 690nm y los 740nm. La reflectividad ocurrida dicha zona del espectro se debe a la transición entre la absorción de clorofilas y la distribución de hojas.
 
 ```js
 //Modified Red Edge Normalized Difference Vegetation Index (NDVI705)
