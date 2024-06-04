@@ -6,7 +6,6 @@ En el presente ejercicio se va a aprender a gestionar la búsqueda y descarga de
 
 Se va a trabajar a partir de la API Code Editor de Google Earth Engine (GEE) y por tanto es necesario cumplir con el registro en la plataforma, tal y como se indica en el capítulo destinado al mismo. 
 
-
 ![](./Auxiliares/Code_Editor.png)
 
 A través del editor de código de GEE se va a la zona de estudio. Se parte de unas parcelas de la especia *Pinus sylvestris* en las que se midieron datos fisiológicos, entre ellos la conductancia estomática (GS, mmol$H_2$O · $m^-2$ · $s^-1$) medida a las 12:00 GMT, durante una campaña de campo en el verano del año 2008. La localización de las mismas se proporciona en una capa en formato shapefile dentro la carpeta Parcelas. Para poder trabajar con ella, primero es necesario tenerla importada en los **Assets**. 
@@ -206,7 +205,10 @@ print(Chart1);
 
 ## 3. Cálculo de índices en imágenes hiperespectrales
 
-Los índices en imágenes hiperespectrales utilizan combinaciones de medidas de reflectancia a distinta longitud de onda, de manera que aportan información útil relativa al estado de la vegetación. La mayoría de las bandas empleadas se encuentran en la región del rojo y del infrarrojo cercano, buscando caracterizar la forma de la curva en el *rojo de borde* o *red-edge* entre los 690nm y los 740nm. La reflectividad ocurrida dicha zona del espectro se debe a la transición entre la absorción de clorofilas y la distribución de hojas.
+Los índices en imágenes hiperespectrales utilizan combinaciones de medidas de reflectancia a distinta longitud de onda, de manera que aportan información útil relativa al estado de la vegetación. La mayoría de las bandas empleadas se encuentran en la región del rojo y del infrarrojo cercano, buscando caracterizar la forma de la curva en el *rojo de borde* o *red-edge* entre los 690nm y los 740nm. La reflectividad ocurrida en dicha zona del espectro se debe a la transición entre la absorción de clorofilas y la distribución de hojas.
+
+Se va a realizar primero un índice NDVI705. Consiste en una modificación del índice tradicional NDVI de forma que tiene en cuenta la longitud de onda correspondiente al *red-edge* en donde ocurre la absorción de las clor
+The Red Edge Normalised Difference Vegetation Index (NDVI705) is a slight alteration to the traditional NDVI and is adopted for use with high spectral resolution reflectance data such as data from Sentinel-2 (Potter et al., 2012). Unlike standard NDVI, NDVI705 takes into account a narrower waveband at the edge of the chlorophyll absorption feature (e.g. 705 nm) rather than at the middle (Gamon and Surfus, 1999; Moroni et al., 2013; Sims and Gamon, 2002). NDVI705 is more affected by chlorophyll content when compared to the NDVI and common applications include precision agriculture, forest monitoring, forest fires and vegetation stress detection (Cundill et al., 2015). This ultimately leads to more reliable VI mapping, especially in dryer areas such as Cyprus, where due to climatic reasons water content is a more sensitive factor in revegetation dynamics (Moreira et al., 2012; Fyllas et al., 2017). Table 1 presents the Sentinel-2 bands’ properties.
 
 ```js
 //Modified Red Edge Normalized Difference Vegetation Index (NDVI705)
