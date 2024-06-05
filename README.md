@@ -1,4 +1,4 @@
-# Capitulo imagenes hiperespectrales
+# Capitulo 8: Sensores hiperespectrales
 
 En el presente ejercicio se va a aprender a gestionar la búsqueda y descarga de datos de imágenes satelitales hiperespectrales empleando la plataforma de análisis geoespacial Google Earth Engine (GEE). También se incorporará un pequeño análisis del estado sanitario de una masa forestal. Para ello se van a emplear imágenes del sensor Hyperion a bordo del satélite EO-1 (Earth Observing 1) que estuvo operativo entre noviembre de 2000 y marzo de 2017. Recopila 220 canales espectrales únicos que van desde 357 nm a 2576 nm con un ancho de banda aproximado de 10 nm, con una resolución espacial de 30 metros para todas las bandas. Los datos se distribuyen mediante descarga sin costo a través de EarthExplorer o USGS Global Visualization Viewer (GloVis) además de GEE.
 
@@ -205,33 +205,33 @@ print(Chart1);
 
 ## 3. Cálculo de índices en imágenes hiperespectrales
 
-Los índices en imágenes hiperespectrales utilizan combinaciones de medidas de reflectancia a distinta longitud de onda, de manera que aportan información útil relativa al estado de la vegetación. La mayoría de las bandas empleadas se encuentran en la región del rojo y del infrarrojo cercano, buscando caracterizar la forma de la curva en el *rojo de borde* o *red-edge* entre los 690nm y los 740nm. La reflectividad ocurrida en dicha zona del espectro se debe a la transición entre la absorción de clorofilas y la distribución de hojas.
+Los índices en imágenes hiperespectrales utilizan combinaciones de medidas de reflectancia a distinta longitud de onda, de manera que aportan información útil relativa al estado de la vegetación. La mayoría de las bandas empleadas se encuentran en la región del rojo y del infrarrojo cercano, buscando caracterizar la forma de la curva en el *rojo de borde* o *red-edge* entre los 690nm y los 740nm. La reflectividad ocurrida en dicha zona del espectro se debe a la transición entre la absorción de clorofilas y la distribución de hojas y esta singularidad la convierte en especialmente relevante.
 
-Se va a realizar primero un índice NDVI705. Consiste en una modificación del índice tradicional NDVI de forma que tiene en cuenta la longitud de onda correspondiente al *red-edge* en donde ocurre la absorción de las clor
-The Red Edge Normalised Difference Vegetation Index (NDVI705) is a slight alteration to the traditional NDVI and is adopted for use with high spectral resolution reflectance data such as data from Sentinel-2 (Potter et al., 2012). Unlike standard NDVI, NDVI705 takes into account a narrower waveband at the edge of the chlorophyll absorption feature (e.g. 705 nm) rather than at the middle (Gamon and Surfus, 1999; Moroni et al., 2013; Sims and Gamon, 2002). NDVI705 is more affected by chlorophyll content when compared to the NDVI and common applications include precision agriculture, forest monitoring, forest fires and vegetation stress detection (Cundill et al., 2015). This ultimately leads to more reliable VI mapping, especially in dryer areas such as Cyprus, where due to climatic reasons water content is a more sensitive factor in revegetation dynamics (Moreira et al., 2012; Fyllas et al., 2017). Table 1 presents the Sentinel-2 bands’ properties.
+Se va a realizar primero el cálculo del índice NDVI705. Consiste en una modificación del índice tradicional NDVI de forma que tiene en cuenta la longitud de onda correspondiente al *red-edge*.
 
 ```js
-//Modified Red Edge Normalized Difference Vegetation Index (NDVI705)
+//Calcular Modified Red Edge Normalized Difference Vegetation Index (NDVI705)
 var NDVI705=reflectancia.normalizedDifference(["B035","B040"]);
+
+//Imprimir en la consola las características de la imagen
 print(NDVI705);
-print(filabres);
 
+//Visualizar resultado del índice
 Map.addLayer(NDVI705,{min:-1,max:1},'NDVI705');
+
+//Calcular los límites geométricos de las parcelas empleadas
 var filabres_limites = filabres.geometry().bounds();
-print(filabres_limites);
 
-//Histograma del índice
-var histograma1 =
-    ui.Chart.image.histogram({
-      image: NDVI705, 
-      region: filabres_limites, 
-      scale: 30})
-        .setOptions({
-          title: 'Hyperion NDVI705 Histogram',
-          hAxis: {title: 'Reflectance'},
-          vAxis:{title: 'Count'}});
-print(histograma1);
+//Exportar a Drive la imagen generada recortada por los límites calculados
+Export.image.toDrive({
+      image: NDVI705.clip(filabres_limites),
+      description: 'NDVI705_Filabres_2008',
+      scale: 30,
+      region: filabres_limites
+    });
+```
 
+```js
 var CRI2 = reflectancia.expression ('float ((1/(Banda1))-(1/(Banda2)))', {
     'Banda1': reflectancia.select ('B016'),  
     'Banda2': reflectancia.select ('B020')});
@@ -239,18 +239,16 @@ var CRI2 = reflectancia.expression ('float ((1/(Banda1))-(1/(Banda2)))', {
 Map.addLayer(CRI2,{min:-1,max:1},'CRI2');
 print(CRI2)
 
-//Histograma del índice
-var histograma2 =
-    ui.Chart.image.histogram({
-      image: CRI2, 
-      region: filabres_limites, 
-      scale: 30})
-        .setOptions({
-          title: 'Hyperion CRI2 Histogram',
-          hAxis: {title: 'Reflectance'},
-          vAxis:{title: 'Count'}});
-print(histograma2);
+//Exportar a Drive la imagen generada recortada por los límites calculados
+Export.image.toDrive({
+      image: CRI2.clip(filabres_limites),
+      description: 'CRI2_Filabres_2008',
+      scale: 30,
+      region: filabres_limites
+    });
+```
 
+```js
 //Indice VREI1
 var VREI1 = reflectancia.expression ('float ((Banda1)/(Banda2))', {
     'Banda1': reflectancia.select ('B039'),  
@@ -258,19 +256,13 @@ var VREI1 = reflectancia.expression ('float ((Banda1)/(Banda2))', {
 
 Map.addLayer(VREI1,{min:1,max:1.5},'VREI1');
 
-//Histograma del índice
-var histograma3 =
-    ui.Chart.image.histogram({
-      image: VREI1, 
-      region: filabres_limites, 
-      scale: 30})
-        .setOptions({
-          title: 'Hyperion VREI1 Histogram',
-          hAxis: {title: 'Reflectance'},
-          vAxis:{title: 'Count'}});
-print(histograma3);
-
-Map.addLayer(filabres, {color: 'red'});
-
+//Exportar a Drive la imagen generada recortada por los límites calculados
+Export.image.toDrive({
+      image: VREI1.clip(filabres_limites),
+      description: 'VREI1_Filabres_2008',
+      scale: 30,
+      region: filabres_limites
+    });
 ```
+
 
