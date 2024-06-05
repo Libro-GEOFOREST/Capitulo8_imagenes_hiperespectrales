@@ -209,6 +209,10 @@ Los índices en imágenes hiperespectrales utilizan combinaciones de medidas de 
 
 Se va a realizar primero el cálculo del índice NDVI705. Consiste en una modificación del índice tradicional NDVI de forma que tiene en cuenta la longitud de onda correspondiente al *red-edge*.
 
+```math
+NDVI705 = \frac{\rho_750 - \rho_705} ·{\rho_750 + \rho_705}
+```
+
 ```js
 //Calcular Modified Red Edge Normalized Difference Vegetation Index (NDVI705)
 var NDVI705=reflectancia.normalizedDifference(["B035","B040"]);
@@ -231,13 +235,23 @@ Export.image.toDrive({
     });
 ```
 
+El siguiente índice que se va a calcular es CRI2. Se trata de un índice que está asociado al contenido de carotenoides de la planta. Los carotenoides son prigmentos que actúan en los procesos de absorción de luz en las plantas. La vegetación debilitada contiene concentraciones más altas de carotenoides, por lo que este índice es una medida de la vegetación estresada. Los valores del índice más altos significan una mayor concentración de carotenoides en relación con la clorofila.
+
+```math
+CRI2 = \frac{1}{\rho_510} - \frac{1}{\rho_700}
+```
+
 ```js
+//Calcular Carotenoid Reflectance Index 2 (CRI2)
 var CRI2 = reflectancia.expression ('float ((1/(Banda1))-(1/(Banda2)))', {
     'Banda1': reflectancia.select ('B016'),  
     'Banda2': reflectancia.select ('B020')});
 
+//Imprimir en la consola las características de la imagen
+print(CRI2);
+
+//Visualizar resultado del índice
 Map.addLayer(CRI2,{min:-1,max:1},'CRI2');
-print(CRI2)
 
 //Exportar a Drive la imagen generada recortada por los límites calculados
 Export.image.toDrive({
@@ -248,12 +262,20 @@ Export.image.toDrive({
     });
 ```
 
+```math
+VREI1 = \frac{\rho_740}{\rho_720}
+```
+
 ```js
-//Indice VREI1
+//Calcular Vogelmann Red Edge Index (VREI1)
 var VREI1 = reflectancia.expression ('float ((Banda1)/(Banda2))', {
     'Banda1': reflectancia.select ('B039'),  
     'Banda2': reflectancia.select ('B037')});
 
+//Imprimir en la consola las características de la imagen
+print(VREI1);
+
+//Visualizar resultado del índice
 Map.addLayer(VREI1,{min:1,max:1.5},'VREI1');
 
 //Exportar a Drive la imagen generada recortada por los límites calculados
