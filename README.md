@@ -210,7 +210,7 @@ Los índices en imágenes hiperespectrales utilizan combinaciones de medidas de 
 Se va a realizar primero el cálculo del índice NDVI705. Consiste en una modificación del índice tradicional NDVI de forma que tiene en cuenta la longitud de onda correspondiente al *red-edge*.
 
 ```math
-NDVI705 = \frac{\rho_750 - \rho_705} ·{\rho_750 + \rho_705}
+NDVI705 = \frac{\rho_{750} - \rho_{705}} {\rho_{750} + \rho_{705}}
 ```
 
 ```js
@@ -238,7 +238,7 @@ Export.image.toDrive({
 El siguiente índice que se va a calcular es CRI2. Se trata de un índice que está asociado al contenido de carotenoides de la planta. Los carotenoides son prigmentos que actúan en los procesos de absorción de luz en las plantas. La vegetación debilitada contiene concentraciones más altas de carotenoides, por lo que este índice es una medida de la vegetación estresada. Los valores del índice más altos significan una mayor concentración de carotenoides en relación con la clorofila.
 
 ```math
-CRI2 = \frac{1}{\rho_510} - \frac{1}{\rho_700}
+CRI2 = \frac{1}{\rho_{510}} - \frac{1}{\rho_{700}}
 ```
 
 ```js
@@ -261,9 +261,10 @@ Export.image.toDrive({
       region: filabres_limites
     });
 ```
+Por último, se calcula el índice VREI1. Este índice es sensible a los efectos combinados de la concentración de clorofila en el dosel arbóreo, su área foliar y su contenido en agua. Se ha aplicado a estudios de fenología de la vegetación y modelado de productividad.
 
 ```math
-VREI1 = \frac{\rho_740}{\rho_720}
+VREI1 = \frac{\rho_{740}}{\rho_{720}}
 ```
 
 ```js
