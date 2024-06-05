@@ -235,6 +235,10 @@ Export.image.toDrive({
     });
 ```
 
+El resultado obtenido es el siguiente:
+
+![](./Auxiliares/NDVI.png)
+
 El siguiente índice que se va a calcular es CRI2. Se trata de un índice que está asociado al contenido de carotenoides de la planta. Los carotenoides son prigmentos que actúan en los procesos de absorción de luz en las plantas. La vegetación debilitada contiene concentraciones más altas de carotenoides, por lo que este índice es una medida de la vegetación estresada. Los valores del índice más altos significan una mayor concentración de carotenoides en relación con la clorofila.
 
 ```math
@@ -261,6 +265,9 @@ Export.image.toDrive({
       region: filabres_limites
     });
 ```
+
+![](./Auxiliares/CRI2.png)
+
 Por último, se calcula el índice VREI1. Este índice es sensible a los efectos combinados de la concentración de clorofila en el dosel arbóreo, su área foliar y su contenido en agua. Se ha aplicado a estudios de fenología de la vegetación y modelado de productividad.
 
 ```math
@@ -287,5 +294,12 @@ Export.image.toDrive({
       region: filabres_limites
     });
 ```
+
+![](./Auxiliares/VREI1.png)
+
+Finalmente, es posible la descarga de un recorte de los índices para la zona de estudio y así trabajar con los datos en otros soportes, por ejemplo, QGIS o R.
+
+![](./Auxiliares/Descarga.png)
+
 
 
